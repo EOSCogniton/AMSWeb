@@ -7,6 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="styles.css">
 
     <title>AMS Data</title>
     <meta name="description" content="A page containing all info monitored by the AMS">
@@ -15,7 +16,24 @@
 </head>
 
 <body>
-    <div id="main"></div>
+    <fieldset>
+        <legend>Selectionner votre mode de suivi:</legend>
+
+        <!-- <div>
+            <input type="radio" id="full" name="mode" value="full" />
+            <label for="full">Afficher toutes mesures</label>
+        </div> -->
+
+        <div>
+            <input type="radio" id="latest" name="mode" value="latest" checked />
+            <label for="latest">Dernière mesure seulement</label>
+        </div>
+    </fieldset>
+    <!-- <fieldset>
+        <input type="checkbox" id="scroll-auto" name="scroll auto" checked>
+        <label for="scroll-auto">Défiler automatiquement</label>
+    </fieldset> -->
+    <div id="main" class="scroll-box"></div>
     <!-- <script type="text/html" src="https://cdn.jsdelivr.net/npm/cubic-spline@3.0.3"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="cubic-spline.js"></script>
