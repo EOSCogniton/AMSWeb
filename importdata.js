@@ -4,7 +4,7 @@ const FSR = 6.144; // Voir ADC.py
 const RESISTOR = 47; //Idem
 const path = "/data/"; // Chemin vers le répertoire de données
 
-
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function loadData(filePath) {
     const req = new XMLHttpRequest();
@@ -18,6 +18,7 @@ function loadData(filePath) {
         // console.log(req.response.slice(0, 8))
         dataview = new DataView(req.response);
         readData(dataview);
+        setTimeout(loadData(filePath), "100");
     };
     req.send();
 }
@@ -141,34 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // observer.observe(scrollBox, { childList: true });
 });
 
-// while (1) {
 
-// var dejafait = false;
 
-(function () {
-    var checkbox = document.querySelector('input[name="mode"]:checked').value;
-    if (checkbox == "full") {
-        // loadData(path + "data.bin");
-        // alert("Attention, pour des raisons de latence, les données ne s'actualisent pas automatiquement lorsque la page n'est pas en mode 'Dernière mesure seulement'");
-        // dejafait = true;
-    }
-    else if (checkbox == "latest") {
-        // dejafait = false;
-        loadData(path + "actualdata.bin");
-    }
-    setTimeout(arguments.callee, 200);
-})();
-
-function dialog(message, yesCallback, noCallback) {
-    $('.title').html(message);
-    var dialog = $('#modal_dialog').dialog();
-
-    $('#btnYes').click(function () {
-        dialog.dialog('close');
-        yesCallback();
-    });
-    $('#btnNo').click(function () {
-        dialog.dialog('close');
-        noCallback();
-    });
-}
+loadData(path + "actualdata.bin");
