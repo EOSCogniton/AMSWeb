@@ -1,5 +1,6 @@
 const TOTAL_IC = 1; // Nombre de BMS
-const MAX_MUX = 12; // Nombre de sondes de températures connectées par BMS
+const MAX_CELL = 13; // Nombre de cellule
+const MAX_MUX = 16; // Nombre de sondes de températures connectées par BMS
 const FSR = 6.144; // Voir ADC.py
 const RESISTOR = 47; //Idem
 const path = "/data/"; // Chemin vers le répertoire de données
@@ -23,7 +24,7 @@ function loadData(filePath) {
     req.send();
 }
 function readData(data) {
-    chunksize = (4 + 1 + (12 + MAX_MUX) * TOTAL_IC) * 2 + 32;
+    chunksize = (4 + 1 + (MAX_CELL + MAX_MUX) * TOTAL_IC) * 2 + 32;
     var data_fit = {};
     if (data.byteLength / chunksize > 100) {
         var n = data.byteLength / chunksize - 100;
@@ -37,12 +38,12 @@ function readData(data) {
         mes["current"] = Math.round(data.getUint16(i * chunksize + 8) * 1000 * FSR / (2 ** 15) / RESISTOR * 100) / 100;
         for (current_bms = 0; current_bms < TOTAL_IC; current_bms++) {
             var ICj = new Object;
-            for (cell = 0; cell < 12; cell++) {
-                indic = i * chunksize + 8 + 2 + (current_bms * (12 + MAX_MUX) + cell) * 2;
+            for (cell = 0; cell < MAX_CELL; cell++) {
+                indic = i * chunksize + 8 + 2 + (current_bms * (MAX_CELL + MAX_MUX) + cell) * 2;
                 ICj["cell" + String(cell + 1)] = data.getUint16(indic) / 10000;
             }
             for (temp_n = 0; temp_n < MAX_MUX; temp_n++) {
-                indic = i * chunksize + 8 + 2 + (current_bms * (12 + MAX_MUX) + 12 + temp_n) * 2;
+                indic = i * chunksize + 8 + 2 + (current_bms * (MAX_CELL + MAX_MUX) + MAX_CELL + temp_n) * 2;
                 ICj["temp" + String(temp_n + 1)] = Math.round(temp(data.getUint16(indic) * 0.0001) * 100) / 100;
             }
             mes["IC" + String(current_bms + 1)] = ICj;
@@ -66,7 +67,7 @@ function format_data(data_fitted) {
         for (j = 0; j < TOTAL_IC; j++) {
             str += "BMS " + String(j + 1) + "<br>";
             var strcell = "";
-            for (k = 0; k < 12; k++) {
+            for (k = 0; k < MAX_CELL; k++) {
                 strcell += "C" + String(k + 1) + ": " + data_now["IC" + String(j + 1)]["cell" + String(k + 1)] + ", ";
             }
             str += "Cellules (V) : " + strcell.substring(0, strcell.length - 2) + "<br>";
